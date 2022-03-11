@@ -31,4 +31,3 @@ pub struct CommandLineArgs {
     #[structopt(parse(from_os_str), short, long)]
     pub journal_file: Option<PathBuf>,
 }
-
