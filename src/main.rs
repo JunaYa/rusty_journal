@@ -1,8 +1,22 @@
 mod cli;
 mod tasks;
+
 use structopt::StructOpt;
+use cli::{Action::*, CommandLineArgs};
+use tasks::Task;
 
 fn main() {
-    let result = cli::CommandLineArgs::from_args();
-    println!("{:#?}", result);
+    let CommandLineArgs {
+        action,
+        journal_file,
+    } = CommandLineArgs::from_args();
+
+    let journal_file = journal_file.expect("Faild to find journal_file");
+
+    match action {
+        Add { text} => tasks::add_task(journal_file, Task::new(text)),
+        List => tasks::list_tasks(journal_file),
+        Done { position } => tasks::complete_task(journal_file, position),
+    }
+    .expect("Faild to perform action")
 }
