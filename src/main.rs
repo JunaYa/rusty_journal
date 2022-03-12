@@ -5,6 +5,7 @@ use structopt::StructOpt;
 use cli::{Action::*, CommandLineArgs};
 use tasks::Task;
 use std::path::PathBuf;
+use anyhow::anyhow;
 
 fn find_default_journal_file() -> Option<PathBuf> {
     home::home_dir().map(|mut path| {
@@ -13,7 +14,7 @@ fn find_default_journal_file() -> Option<PathBuf> {
     })
 }
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     let CommandLineArgs {
         action,
         journal_file,
@@ -21,12 +22,12 @@ fn main() {
 
     let journal_file = journal_file
         .or_else(find_default_journal_file)
-        .expect("Faild to find journal_file.");
+        .ok_or(anyhow!("Faild to find journal_file."))?;
 
     match action {
         Add { text} => tasks::add_task(journal_file, Task::new(text)),
         List => tasks::list_tasks(journal_file),
         Done { position } => tasks::complete_task(journal_file, position),
-    }
-    .expect("Faild to perform action")
+    }?;
+    Ok(())
 }

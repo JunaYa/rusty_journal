@@ -4,7 +4,6 @@ use serde::Serialize;
 use std::fmt;
 use std::fs::{File, OpenOptions};
 use std::io::{Error, ErrorKind, Result, Seek, SeekFrom};
-use std::path::Path;
 use std::path::PathBuf;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -34,7 +33,7 @@ fn collect_task(mut file: &File) -> Result<Vec<Task>> {
 
 pub fn add_task(journal_path: PathBuf, task: Task) -> Result<()> {
     // open the file
-    let mut file = OpenOptions::new()
+    let file = OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
